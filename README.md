@@ -1,25 +1,50 @@
-# README
+# How to limit nested model total counts?
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Question description:
 
-Things you may want to cover:
+> as title, I have product & order model with nested relationship, like:
+```
+resources :products do
+  resources :orders 
+end
+```
+> Products has a filed, it name is 'amount', for example is 5.
+> how can I limit orders total counts less than or equal to 5?
+> I don't know how to use parent keyword in order model. Who can help me? thanks.
+> I need a resolution, thanks.
 
-* Ruby version
+![](01.jpg)
 
-* System dependencies
+![](02.jpg)
 
-* Configuration
+![](03.jpg)
 
-* Database creation
+![](04.jpg)
 
-* Database initialization
+![](05.jpg)
 
-* How to run the test suite
+## Answer from Abhishek Badmaliya
 
-* Services (job queues, cache servers, search engines, etc.)
+> We can act in this way. Here, I'll give you an answer in the form of a piece of code. You can test the code below, where I've created a method to handle this limit.
 
-* Deployment instructions
+```
+class Order < ApplicationRecord
+  # association
+  belongs_to :product
+  # create callback
+  before_create :check_order_limit
 
-* ...
-# limit
+  private
+
+  # created method which is called before creation
+  def check_order_limit
+    errors.add(:base, 'Oops, Limit Exceeded!') if product.orders.size >= product.amount
+  end
+end
+```
+
+But it's not work! I can't see any error message when I overload in amount!
+
+
+[https://stackoverflow.com/questions/76069450/how-to-limit-nested-model-total-counts](https://stackoverflow.com/questions/76069450/how-to-limit-nested-model-total-counts)
+
